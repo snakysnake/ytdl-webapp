@@ -34,7 +34,7 @@ import DownloadSong from "./components/DownloadSong.vue";
 import Footer from "./components/Footer.vue";
 import Login from "./components/Login.vue";
 import Modal from "./components/Modal.vue";
-// import bootstrap from "./assets/js/bootstrap.bundle.min.js";
+import bootstrap from "./assets/js/bootstrap.bundle.min.js";
 
 // require("./assets/js/bootstrap.bundle.min.js");
 
@@ -58,10 +58,10 @@ export default {
       ui_change_song_modal_id: "changeSongInfo",
     };
   },
-  //   created() {
-  //     this.initialize();
-  //     document.title = "Bootleg";
-  //   },
+  created() {
+    this.initialize();
+    document.title = "Bootleg";
+  },
   methods: {
     setRandomSong() {
       this.setCurrentSong(this.ui_songs[0]);
@@ -122,13 +122,13 @@ export default {
 
       if (this.background_click_count_for_same_song == 5) {
         // manually update song information
-        // var myModal = new bootstrap.Modal(
-        //   document.getElementById(this.ui_change_song_modal_id),
-        //   {
-        //     keyboard: false,
-        //   }
-        // );
-        // myModal.show();
+        var myModal = new bootstrap.Modal(
+          document.getElementById(this.ui_change_song_modal_id),
+          {
+            keyboard: false,
+          }
+        );
+        myModal.show();
       }
       if (this.background_click_count_for_same_song == 15) {
         console.log(
@@ -140,14 +140,14 @@ export default {
       }
       this.ui_current_song = song;
     },
-    // makeSongDownloadableAgain(songid) {
-    //   axios
-    //     .post(process.env.EXPRESS_SERVER + "makeSongAvailableForDownload", {
-    //       id: songid,
-    //     })
-    //     .then(alert("Erfolgreich (SongID: " + songid + ") zum download freigegeben!"))
-    //     .catch((err) => console.log(err));
-    // },
+    makeSongDownloadableAgain(songid) {
+      axios
+        .post(process.env.EXPRESS_SERVER + "makeSongAvailableForDownload", {
+          id: songid,
+        })
+        .then(alert("Erfolgreich (SongID: " + songid + ") zum download freigegeben!"))
+        .catch((err) => console.log(err));
+    },
     toggleAuth() {
       console.log("Toggle Auth called");
       this.ui_loggedIn = !this.ui_loggedIn;
@@ -171,7 +171,9 @@ export default {
         while (c.charAt(0) == " ") {
           n++;
           if (n > 1000) {
-            throw new Error("If there is a space inside this cookie, you'd be f**ked without this precaution haha.. i was there!");
+            throw new Error(
+              "If there is a space inside this cookie, you'd be f**ked without this precaution haha.. i was there!"
+            );
           }
           console.log("Inside a loop, inside a loop");
           c.substring(1);

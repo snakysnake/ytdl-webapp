@@ -5,7 +5,7 @@ from BackendFX import BackendFX
 import requests
 import json
 import shutil
-import youtube_dl
+from yt_dlp import YoutubeDL
 from dotenv import load_dotenv
 
 load_dotenv()
@@ -19,7 +19,7 @@ fileNameFormat = '%(title)s.%(ext)s'
 def download_json(foldername, link, song_id):
     print("Download JSON Called...")
     path_to_folder_of_downloaded_json = tempFilesFolder+foldername+'/music_info/'
-    ytdl = youtube_dl.YoutubeDL(
+    ytdl = YoutubeDL(
         {
             'outtmpl': path_to_folder_of_downloaded_json + fileNameFormat,
             'writeinfojson' : True,
@@ -42,7 +42,11 @@ def download_json(foldername, link, song_id):
                 if (values['artist'] != ""):
                     artist = values['artist']
             except KeyError:
-                artist = "Unkown Artist"
+                try:
+                    if (values['uploader'] != ""):
+                        artist = values['uploader']
+                except KeyError:
+                    artist = "Unkown Artist"
 
             try:
                 if (values['album'] != ""):
@@ -50,11 +54,17 @@ def download_json(foldername, link, song_id):
             except KeyError:
                 album = "Unknown Album"
 
+
+            # i hope u like spagehtti xD
             try:
-                if (values['alt_title'] != ""):
-                    title = values['alt_title']
+                if (values['title'] != ""):
+                    title = values['title']
             except KeyError:
-                title = "Unknown Title"
+                try: 
+                    if (values['alt_title'] != ""):
+                        title = values['alt_title']
+                except KeyError:
+                    title = "Unknown Title"
 
 
             # update song info
@@ -67,7 +77,7 @@ def download_json(foldername, link, song_id):
 def download_image(foldername, link, song_id):
     print("Download Image Called...")
     path_to_folder_of_downloaded_image = tempFilesFolder+foldername+'/music_thumbnails/'
-    ytdl = youtube_dl.YoutubeDL(
+    ytdl = YoutubeDL(
         {
             'outtmpl': path_to_folder_of_downloaded_image + fileNameFormat,
             'writethumbnail': True,
@@ -92,7 +102,7 @@ def download_image(foldername, link, song_id):
 def download_audio(foldername, link, song_id):
     print("Download Audio Called...")
     path_to_folder_of_downloaded_audio = tempFilesFolder+foldername+'/music/'
-    ytdl = youtube_dl.YoutubeDL(
+    ytdl = YoutubeDL(
         {
             'outtmpl': path_to_folder_of_downloaded_audio + fileNameFormat,
             'format': 'bestaudio/best',
@@ -108,13 +118,14 @@ def download_audio(foldername, link, song_id):
         try:
             ytdl.download([link])
             music_filename = BackendFX().getFirstFileInDirectory(path_to_folder_of_downloaded_audio)
-            os.rename(path_to_folder_of_downloaded_audio+"/"+music_filename, targetFolderRoot+"music/"+music_filename)
+            os.rename(path_to_folder_of_downloaded_audio+music_filename, targetFolderRoot+"music/"+music_filename)
             
             #update filename
             data = { 'filename' : music_filename, 'id': song_id}
             requests.post(os.getenv("EXPRESS_SERVER") + 'updatedownloadedsong', data, verify=False)
-        except:
+        except Exception as e:
             print("Something went wrong (Audio)")
+            print(e)
 
 
 def download_service(): 
