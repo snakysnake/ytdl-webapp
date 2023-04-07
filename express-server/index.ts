@@ -44,6 +44,10 @@ app.post('/createuser', async (req: Request, res: Response) => {
   // wir machen da iwie ne zuweisung und das as any nennt man in ts 'casten'
   const { name, password, email, keytocreateuser } = req.body as any;
 
+  if (name.includes(" ")) {
+    return res.status(418).send("I am a Teapot and a Space is not ok in username.");
+  }
+
   // ----------------- CREATE STATEMENT ------------------
   // here its important to set a complex key :) 
   // dont do stuff like this in any project.. it was one of my first projects when it comes to serverside js 

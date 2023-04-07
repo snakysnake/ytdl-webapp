@@ -68,8 +68,8 @@ export default {
       if (res === "0") {
         console.log("Nope das hat nicht geklappt");
       } else {
-        this.$emit("toggleAuth");
         document.cookie = "publickey=" + res;
+        this.$emit("toggleAuth");
       }
     },
   },

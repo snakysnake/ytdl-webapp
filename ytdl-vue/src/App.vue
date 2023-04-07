@@ -25,6 +25,7 @@
 
 <style></style>
 
+//
 <script>
 import axios from "axios";
 import Navbar from "./components/Navbar.vue";
@@ -33,10 +34,9 @@ import DownloadSong from "./components/DownloadSong.vue";
 import Footer from "./components/Footer.vue";
 import Login from "./components/Login.vue";
 import Modal from "./components/Modal.vue";
-import bootstrap from "./assets/js/bootstrap.bundle.min.js";
+// import bootstrap from "./assets/js/bootstrap.bundle.min.js";
 
-require("./assets/js/bootstrap.bundle.min.js");
-require("vue-cookies");
+// require("./assets/js/bootstrap.bundle.min.js");
 
 export default {
   name: "App",
@@ -58,10 +58,10 @@ export default {
       ui_change_song_modal_id: "changeSongInfo",
     };
   },
-  created() {
-    this.initialize();
-    document.title = "Bootleg";
-  },
+  //   created() {
+  //     this.initialize();
+  //     document.title = "Bootleg";
+  //   },
   methods: {
     setRandomSong() {
       this.setCurrentSong(this.ui_songs[0]);
@@ -84,7 +84,9 @@ export default {
       return a;
     },
     initialize() {
+      console.log("Initializing...");
       if (this.getCookie("publickey").length > 0) {
+        console.log("Cookie found 🍪");
         // toggle login
         this.ui_loggedIn = true;
         axios
@@ -103,6 +105,7 @@ export default {
 
         return true;
       } else {
+        console.log("Cookie not found");
         return false;
       }
     },
@@ -119,14 +122,13 @@ export default {
 
       if (this.background_click_count_for_same_song == 5) {
         // manually update song information
-        var myModal = new bootstrap.Modal(
-          document.getElementById(this.ui_change_song_modal_id),
-          {
-            keyboard: false,
-          }
-        );
-
-        myModal.show();
+        // var myModal = new bootstrap.Modal(
+        //   document.getElementById(this.ui_change_song_modal_id),
+        //   {
+        //     keyboard: false,
+        //   }
+        // );
+        // myModal.show();
       }
       if (this.background_click_count_for_same_song == 15) {
         console.log(
@@ -138,14 +140,14 @@ export default {
       }
       this.ui_current_song = song;
     },
-    makeSongDownloadableAgain(songid) {
-      axios
-        .post(process.env.EXPRESS_SERVER + "makeSongAvailableForDownload", {
-          id: songid,
-        })
-        .then(alert("Erfolgreich (SongID: " + songid + ") zum download freigegeben!"))
-        .catch((err) => console.log(err));
-    },
+    // makeSongDownloadableAgain(songid) {
+    //   axios
+    //     .post(process.env.EXPRESS_SERVER + "makeSongAvailableForDownload", {
+    //       id: songid,
+    //     })
+    //     .then(alert("Erfolgreich (SongID: " + songid + ") zum download freigegeben!"))
+    //     .catch((err) => console.log(err));
+    // },
     toggleAuth() {
       console.log("Toggle Auth called");
       this.ui_loggedIn = !this.ui_loggedIn;
@@ -154,7 +156,7 @@ export default {
         console.log("User logged in, loading UI");
         if (!this.initialize()) {
           console.log("Cookie not set, loading UI again");
-          location.reload();
+          // location.reload();
         }
       }
     },
@@ -162,8 +164,16 @@ export default {
       let name = cname + "=";
       let decodedCookie = decodeURIComponent(document.cookie);
       let ca = decodedCookie.split(";");
+      let n = 0;
       for (var c of ca) {
+        n++;
+        console.log("Inside a loop");
         while (c.charAt(0) == " ") {
+          n++;
+          if (n > 1000) {
+            throw new Error("If there is a space inside this cookie, you'd be f**ked without this precaution haha.. i was there!");
+          }
+          console.log("Inside a loop, inside a loop");
           c.substring(1);
         }
         if (c.indexOf(name) == 0) {
