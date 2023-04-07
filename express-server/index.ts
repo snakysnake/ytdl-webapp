@@ -53,7 +53,7 @@ app.post('/createuser', async (req: Request, res: Response) => {
   // dont do stuff like this in any project.. it was one of my first projects when it comes to serverside js 
   // and i did not really know what i was doing..
   // but i knew it was unsafe, but yeahhhhh
-  if (keytocreateuser == process.env.CREATIONKEY) {
+  if (keytocreateuser == process.env.CREATION_KEY) {
     try {
       const user = await prisma.user.create({
         data: {
@@ -64,13 +64,14 @@ app.post('/createuser', async (req: Request, res: Response) => {
           publickey: makeRandomString(32),
         },
       });
-      res.json(user);
+      return res.json(user);
     }
     catch (e) {
       console.log(e);
-      res.status(403).json('0');
+      return res.status(403).json('0');
     }
   }
+  return res.status(403).send("Das hat nicht geklappt");
   // ----------------------------------------------------
 });
 
@@ -102,14 +103,14 @@ app.post('/login', async (req: Request, res: Response) => {
           publickey: new_publicKey,
         },
       });
-      res.json(new_publicKey);
+      return res.json(new_publicKey);
     }
     else {
-      res.status(403).json("0");
+      return res.status(403).json("0");
     }
   }
   else {
-    res.status(403).json("0");
+    return res.status(403).json("0");
   }
 
 });
@@ -154,16 +155,16 @@ app.post('/lookforsong', async (req: Request, res: Response) => {
         }
       });
 
-      res.json(getSongByName);
+      return res.json(getSongByName);
     }
     else {
       console.log("Key stimmt nicht");
-      res.status(403).json("0");
+      return res.status(403).json("0");
     }
   }
   else {
     console.log("Kein Key angegeben");
-    res.json("0");
+    return res.json("0");
   }
 });
 
@@ -194,9 +195,9 @@ app.get('/getsongtodownload', async (req: Request, res: Response) => {
       }
     })
 
-    res.json(getSongToDownload);
+    return res.json(getSongToDownload);
   } else {
-    res.json("0")
+    return res.json("0")
   }
 });
 
@@ -218,11 +219,11 @@ app.post('/updatedownloadedsong', async (req: Request, res: Response) => {
   });
   if (updateDownloadedSong === null) {
     // " fail digga!!! "
-    res.json("0");
+    return res.json("0");
   }
   else {
     // nice, bre ;)
-    res.json("1")
+    return res.json("1")
   }
 });
 
@@ -257,16 +258,16 @@ app.post('/download', async (req: Request, res: Response) => {
       // success, if the file was saved
       console.log('Link appended and added to database!');
       // success.
-      res.json('1');
+      return res.json('1');
     }
     else {
       // fail.
       console.log(link + " ist keine gütlige URL");
-      res.json('0');
+      return res.json('0');
     }
   }
   else {
-    res.json('0');
+    return res.json('0');
   }
 });
 

@@ -42,6 +42,16 @@
         />
         <label for="floatingInputx">Creation Secret</label>
       </div>
+      <div v-if="mode == 'reg'" class="form-floating m-2">
+        <input
+          type="email"
+          class="form-control"
+          id="email"
+          placeholder="myemail@gmail.com"
+          v-model="email"
+        />
+        <label for="email">Email</label>
+      </div>
 
       <div class="checkbox mb-3">
         <label class="text-white mx-2">
@@ -73,6 +83,7 @@ export default {
       ui_password: "",
       ui_username: "",
       secret: "",
+      email: "",
     };
   },
   methods: {
@@ -100,15 +111,20 @@ export default {
         .post(process.env.VUE_APP_EXPRESS_SERVER + "createuser", {
           name: this.ui_username,
           password: this.ui_password,
-          creationsecret: this.secret,
+          email: this.email,
+          keytocreateuser: this.secret,
         })
         .then((res) => {
           console.log(res);
-          alert("Could have worked, should have worked. Sorry for the spaghetti code.");
+          alert("Should work. Please press Ok.");
+          this.mode = "login";
+          this.login();
         })
         .catch((err) => {
           console.log(err);
-          alert("Unfortunately this did not work. Most likely your Creation Secret is incorrect.");
+          alert(
+            "Unfortunately this did not work. Most likely your Creation Secret is incorrect."
+          );
         });
     },
     setLoginCredentials(res) {
