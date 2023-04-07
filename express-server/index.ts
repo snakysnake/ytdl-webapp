@@ -68,7 +68,7 @@ app.post('/createuser', async (req: Request, res: Response) => {
     }
     catch (e) {
       console.log(e);
-      res.json('0');
+      res.status(403).json('0');
     }
   }
   // ----------------------------------------------------
@@ -105,11 +105,11 @@ app.post('/login', async (req: Request, res: Response) => {
       res.json(new_publicKey);
     }
     else {
-      res.json("0");
+      res.status(403).json("0");
     }
   }
   else {
-    res.json("0");
+    res.status(403).json("0");
   }
 
 });
@@ -158,7 +158,7 @@ app.post('/lookforsong', async (req: Request, res: Response) => {
     }
     else {
       console.log("Key stimmt nicht");
-      res.json("0");
+      res.status(403).json("0");
     }
   }
   else {

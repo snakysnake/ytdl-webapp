@@ -1,8 +1,17 @@
 <template>
   <div class="container-sm h-100 align-items-center">
-    <form class="" @submit.prevent="login">
+    <form class="" @submit="sendIt" @submit.prevent="onSubmit">
       <img class="mb-4" src="./../assets/logo.png" alt="" width="72" height="72" />
-      <h1 class="h3 mb-3 fw-normal">Anmelden</h1>
+      <div v-if="mode == 'login'">
+        <button class="btn btn-danger mb-3" type="button" @click="mode = 'reg'">
+          To Register
+        </button>
+        <h1 class="h3 mb-3 fw-normal">To Login</h1>
+      </div>
+      <div v-else>
+        <button class="btn btn-danger mb-3" @click="mode = 'login'">Login</button>
+        <h1 class="h3 mb-3 fw-normal">Register</h1>
+      </div>
       <div class="form-floating m-2">
         <input
           type="text"
@@ -22,6 +31,16 @@
           v-model="ui_password"
         />
         <label for="floatingPassword">Password</label>
+      </div>
+      <div v-if="mode == 'reg'" class="form-floating m-2">
+        <input
+          type="text"
+          class="form-control"
+          id="floatingInputx"
+          placeholder="your_secret"
+          v-model="secret"
+        />
+        <label for="floatingInputx">Creation Secret</label>
       </div>
 
       <div class="checkbox mb-3">
@@ -50,11 +69,20 @@ export default {
   name: "Login",
   data() {
     return {
+      mode: "login",
       ui_password: "",
       ui_username: "",
+      secret: "",
     };
   },
   methods: {
+    sendIt() {
+      if (this.mode == "reg") {
+        this.register();
+      } else {
+        this.login();
+      }
+    },
     login() {
       axios
         .post(process.env.VUE_APP_EXPRESS_SERVER + "login", {
@@ -62,7 +90,26 @@ export default {
           password: this.ui_password,
         })
         .then((res) => this.setLoginCredentials(res.data))
-        .catch((err) => console.log(err));
+        .catch((err) => {
+          console.log(err);
+          alert("Login did not work, unfortunately..");
+        });
+    },
+    register() {
+      axios
+        .post(process.env.VUE_APP_EXPRESS_SERVER + "createuser", {
+          name: this.ui_username,
+          password: this.ui_password,
+          creationsecret: this.secret,
+        })
+        .then((res) => {
+          console.log(res);
+          alert("Could have worked, should have worked. Sorry for the spaghetti code.");
+        })
+        .catch((err) => {
+          console.log(err);
+          alert("Unfortunately this did not work. Most likely your Creation Secret is incorrect.");
+        });
     },
     setLoginCredentials(res) {
       if (res === "0") {

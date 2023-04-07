@@ -3,15 +3,15 @@ generator client {
 }
 
 datasource db {
-  provider = "mysql"
-  url      = env("DATABASE_URL")
+  provider = "sqlite"
+  url      = "file:./dev.db"
 }
 
 model User {
   id        Int         @id @default(autoincrement())
-  name      String      @unique @db.VarChar(255)
-  email     String      @unique @db.VarChar(255)
-  password  String      @db.VarChar(255)
+  name      String      @unique
+  email     String      @unique
+  password  String
   publickey String
   // songclicks Songclick[]
   Songclick Songclick[]
@@ -19,12 +19,12 @@ model User {
 
 model Song {
   id             Int    @id @default(autoincrement())
-  name           String @db.VarChar(255)
-  filename       String @db.VarChar(255)
-  image_filename String @db.VarChar(255)
-  link           String @unique @db.VarChar(255)
-  artist         String @db.VarChar(255) @default("")
-  album          String @db.VarChar(255) @default("")
+  name           String
+  filename       String
+  image_filename String
+  link           String @unique
+  artist         String @default("")
+  album          String @default("")
   ready          Int    @default(0)
 }
 
