@@ -1,0 +1,8 @@
+__pycache__/
+_temp/*
+.env
+bin/
+etc/
+include/
+share/
+lib/
