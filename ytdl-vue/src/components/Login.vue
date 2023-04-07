@@ -1,13 +1,7 @@
 <template>
   <div class="container-sm h-100 align-items-center">
     <form class="" @submit.prevent="login">
-      <img
-        class="mb-4"
-        src="./../assets/logo.png"
-        alt=""
-        width="72"
-        height="72"
-      />
+      <img class="mb-4" src="./../assets/logo.png" alt="" width="72" height="72" />
       <h1 class="h3 mb-3 fw-normal">Anmelden</h1>
       <div class="form-floating m-2">
         <input
@@ -32,14 +26,11 @@
 
       <div class="checkbox mb-3">
         <label class="text-white mx-2">
-          <input type="checkbox" class="m-2" value="remember-me" required />I
-          look fresh
+          <input type="checkbox" class="m-2" value="remember-me" required />I look fresh
         </label>
       </div>
       <div class="p-2 w-100">
-        <button class="w-100 btn btn-lg btn-danger" type="submit">
-          Lets go
-        </button>
+        <button class="w-100 btn btn-lg btn-danger" type="submit">Lets go</button>
       </div>
       <p class="mt-5 mb-3 text-muted">© Copy & Paste Inc 2k22</p>
     </form>
@@ -66,7 +57,7 @@ export default {
   methods: {
     login() {
       axios
-        .post(process.env("EXPRESS_SERVER") + "login", {
+        .post(process.env.VUE_APP_EXPRESS_SERVER + "login", {
           name: this.ui_username,
           password: this.ui_password,
         })

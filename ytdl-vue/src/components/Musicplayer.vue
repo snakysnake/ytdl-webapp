@@ -58,7 +58,7 @@ export default {
     loadSong(filename) {
       try {
         // for debugging: return require("@/assets/music/" + filename);
-        return process.env("EXPRESS_SERVER") + "music/" + filename;
+        return process.env.VUE_APP_EXPRESS_SERVER + "music/" + filename;
       } catch (e) {
         console.log("Song nicht gefunden");
       }
@@ -66,7 +66,7 @@ export default {
     loadImage(image) {
       try {
         // for debugging: return require("@/assets/music_thumbnails/" + image);
-        return process.env("EXPRESS_SERVER") + "music_thumbnails/" + image;
+        return process.env.VUE_APP_EXPRESS_SERVER + "music_thumbnails/" + image;
       } catch (e) {
         console.log("Bild nicht gefunden");
       }

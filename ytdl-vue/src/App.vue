@@ -88,7 +88,7 @@ export default {
         // toggle login
         this.ui_loggedIn = true;
         axios
-          .post(process.env("EXPRESS_SERVER") + "lookforsong", {
+          .post(process.env.VUE_APP_EXPRESS_SERVER + "lookforsong", {
             publickey: this.getCookie("publickey"),
           })
           .then((res) => {
@@ -140,7 +140,7 @@ export default {
     },
     makeSongDownloadableAgain(songid) {
       axios
-        .post(process.env("EXPRESS_SERVER") + "makeSongAvailableForDownload", {
+        .post(process.env.EXPRESS_SERVER + "makeSongAvailableForDownload", {
           id: songid,
         })
         .then(alert("Erfolgreich (SongID: " + songid + ") zum download freigegeben!"))

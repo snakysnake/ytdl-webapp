@@ -95,7 +95,7 @@ export default {
           "Wie wärs wenn du versuchst was einzutippen?";
       } else {
         axios
-          .post(process.env("EXPRESS_SERVER") + "download", {
+          .post(process.env.VUE_APP_EXPRESS_SERVER + "download", {
             link: this.song_link,
           })
           .then((res) => this.respondToDownloadRequest(res.data))

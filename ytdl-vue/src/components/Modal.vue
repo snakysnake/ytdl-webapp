@@ -91,7 +91,7 @@ export default {
     updateSongInformation() {
       console.log(this.song.id, this.ui_new_song_name, this.ui_new_song_artist);
       axios
-        .post(process.env("EXPRESS_SERVER") + "updatedownloadedsong", {
+        .post(process.env.VUE_APP_EXPRESS_SERVER + "updatedownloadedsong", {
           id: this.song.id,
           name: this.ui_new_song_name,
           artist: this.ui_new_song_artist,

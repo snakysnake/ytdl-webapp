@@ -42,7 +42,7 @@ export default {
       if (!fakeSearch) {
         console.log("Not a fake search");
         axios
-          .post(process.env("EXPRESS_SERVER") + "lookforsong", {
+          .post(process.env.VUE_APP_EXPRESS_SERVER + "lookforsong", {
             name: this.song_search_input,
             publickey: this.getCookie("publickey"),
           })
@@ -51,7 +51,7 @@ export default {
       } else {
         console.log("Fake search");
         axios
-          .post(process.env("EXPRESS_SERVER") + "lookforsong", {
+          .post(process.env.VUE_APP_EXPRESS_SERVER + "lookforsong", {
             publickey: this.getCookie("publickey"),
           })
           .then((res) => this.changeSongs(res.data))
