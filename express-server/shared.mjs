@@ -4,7 +4,7 @@ import { PrismaClient } from '@prisma/client';
 
 const prisma = new PrismaClient()
 
-export async function login(email: string, password: string) {
+export async function login(email, password) {
     console.log("User with email: (", email, ") trying to login...");
     let success = false;
     let message = "Unbekannter komischer Fehler...";
@@ -38,10 +38,10 @@ export async function login(email: string, password: string) {
     }
 }
 
-function createJSONWebToken(user: any) {
+function createJSONWebToken(user) {
     return Jwt.sign(
         { id: user.id, email: user.email },
-        process.env.TOKEN_KEY as string,
+        process.env.TOKEN_KEY,
         {
             expiresIn: "672h",
         }

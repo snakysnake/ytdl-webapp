@@ -1,17 +1,17 @@
 import { PrismaClient } from '@prisma/client';
-import { Request, Response } from 'express';
 import express from 'express';
 import bodyParser from 'body-parser';
-import { login } from './shared';
+import { login } from './shared.mjs';
 
 
 // start prisma client
 const prisma = new PrismaClient()
 
 // export server stuff
-const https = require('https');
-var cors = require('cors')
-const fs = require('fs');
+import https from "https";
+import cors from "cors"
+import fs from "fs";
+
 const app = express();
 
 // prepare to use json
@@ -33,9 +33,9 @@ app.use('/music', express.static('./public/music'));
 
 // get all users as json by posting
 
-app.post('/createuser', async (req: Request, res: Response) => {
+app.post('/createuser', async (req, res) => {
   // wir machen da iwie ne zuweisung und das as any nennt man in ts 'casten'
-  const { name, password, email, keytocreateuser } = req.body as any;
+  const { name, password, email, keytocreateuser } = req.body;
 
   if (name.includes(" ")) {
     return res.status(418).send("I am a Teapot and a Space is not ok in username.");
@@ -68,19 +68,19 @@ app.post('/createuser', async (req: Request, res: Response) => {
 });
 
 app.post("/login", async (req, res) => {
-  const { email, password } = req.body as any;
+  const { email, password } = req.body;
   let response = await login(email, password)
   return res.json(response);
 });
 
-app.post('/lookforsong', async (req: Request, res: Response) => {
-  var { name } = req.body as any;
+app.post('/lookforsong', async (req, res) => {
+  var { name } = req.body;
 
   if (name === undefined) {
     name = "";
   }
 
-  const getSongByName: object | null = await prisma.song.findMany({
+  const getSongByName = await prisma.song.findMany({
     where: {
       OR: [{
         name: {
@@ -107,8 +107,8 @@ app.post('/lookforsong', async (req: Request, res: Response) => {
   return res.json(getSongByName);
 });
 
-app.get('/getsongtodownload', async (req: Request, res: Response) => {
-  const getSongToDownload: object | null = await prisma.song.findFirst({
+app.get('/getsongtodownload', async (req, res) => {
+  const getSongToDownload = await prisma.song.findFirst({
     where: {
       ready: 0,
     },
@@ -125,7 +125,7 @@ app.get('/getsongtodownload', async (req: Request, res: Response) => {
     // figure out how to insert the id here... @benedev? xD
     var songToDownloadId = Object.values(getSongToDownload)[0];
     console.log("EOI: " + songToDownloadId);
-    const setSongToReady: object | null = await prisma.song.update({
+    const setSongToReady = await prisma.song.update({
       where: {
         id: songToDownloadId,
       },
@@ -140,10 +140,10 @@ app.get('/getsongtodownload', async (req: Request, res: Response) => {
   }
 });
 
-app.post('/updatedownloadedsong', async (req: Request, res: Response) => {
-  const { id, name, filename, image_filename, album, artist } = req.body as any;
+app.post('/updatedownloadedsong', async (req, res) => {
+  const { id, name, filename, image_filename, album, artist } = req.body;
   var id_int = parseInt(id);
-  const updateDownloadedSong: object | null = await prisma.song.update({
+  const updateDownloadedSong = await prisma.song.update({
     where: {
       id: id_int,
     },
@@ -166,12 +166,12 @@ app.post('/updatedownloadedsong', async (req: Request, res: Response) => {
 });
 
 // write url to download to file, python will do the rest
-app.post('/download', async (req: Request, res: Response) => {
-  const { link } = req.body as any;
+app.post('/download', async (req, res) => {
+  const { link } = req.body;
   console.log("Request to download :" + link);
 
   // wir überprüfen ob der link bereits in unserer datenbank vorhanden ist.. 
-  const getSongByLink: object | null = await prisma.song.findUnique({
+  const getSongByLink = await prisma.song.findUnique({
     where: {
       link: link,
     },
@@ -210,13 +210,13 @@ app.post('/download', async (req: Request, res: Response) => {
 });
 
 
-app.post('/makeSongAvailableForDownload', async (req: Request, res: Response) => {
-  const { id } = req.body as any;
+app.post('/makeSongAvailableForDownload', async (req, res) => {
+  const { id } = req.body;
 
   console.log("Song erneut zum download freigeben: " + id);
   // TODO überprüfen ob es den song wirklich nicht gibt... 
 
-  const updateSongById: object | null = await prisma.song.update({
+  const updateSongById = await prisma.song.update({
     where: {
       id: id,
     },
@@ -227,24 +227,13 @@ app.post('/makeSongAvailableForDownload', async (req: Request, res: Response) =>
 });
 
 
-function isUrl(url: string) {
+function isUrl(url) {
   var expression = /https?:\/\/(www\.)?[-a-zA-Z0-9@:%._\+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b([-a-zA-Z0-9()@:%_\+.~#?&//=]*)/
   var regex = new RegExp(expression)
   if (url.match(regex)) {
     return true;
   }
   return false;
-}
-
-function makeRandomString(length: number) {
-  var result = '';
-  var characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
-  var charactersLength = characters.length;
-  for (var i = 0; i < length; i++) {
-    result += characters.charAt(Math.floor(Math.random() *
-      charactersLength));
-  }
-  return result;
 }
 
 
