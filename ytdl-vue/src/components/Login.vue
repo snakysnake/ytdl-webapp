@@ -129,7 +129,8 @@ export default {
       if (!res.success) {
         console.log("Nope das hat nicht geklappt");
       } else {
-        this.$store.state.jwt = res.jwt;
+        console.log(res);
+        this.$store.commit("setJwt", res.jwt);
         this.$emit("toggleAuth");
       }
     },

@@ -5,10 +5,13 @@ import { createStore } from 'vuex'
 
 // Create a new store instance.
 let store = createStore({
-    state() {
-        return {
-            jwt: "",
-        }
+    state: {
+        jwt: "",
+    },
+    mutations: {
+        setJwt(state, jwt) {
+            state.jwt = jwt;
+        },
     },
     plugins: [createPersistedState()],
 })
