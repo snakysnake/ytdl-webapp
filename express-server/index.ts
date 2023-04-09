@@ -1,15 +1,8 @@
 import { PrismaClient } from '@prisma/client';
-
-/**
- * Benedict Allerberger: 
- * Entweder importierst du nur „express“ und schreibst dann express.Request 
- * oder du importierst erst express und dann request und response
- */
 import { Request, Response } from 'express';
 import express from 'express';
 import bodyParser from 'body-parser';
-
-
+import { login } from './shared';
 
 
 // start prisma client
@@ -58,10 +51,9 @@ app.post('/createuser', async (req: Request, res: Response) => {
       const user = await prisma.user.create({
         data: {
           name: name,
-          password: password,
+          passwordHash: password,
           // anstelle von 'email: email,' kann man auch folgende kurzschreibweise nehmen:
           email: email,
-          publickey: makeRandomString(32),
         },
       });
       return res.json(user);
@@ -75,97 +67,44 @@ app.post('/createuser', async (req: Request, res: Response) => {
   // ----------------------------------------------------
 });
 
-app.post('/login', async (req: Request, res: Response) => {
-  const { name, password } = req.body as any;
-  if (name !== undefined && password !== undefined) {
-    console.log("Name: " + name);
-    console.log("Passwort: " + password);
-
-    const getUserByNameAndPassword: object | null = await prisma.user.findMany({
-      where: {
-        name: name,
-        password: password,
-      },
-      select: {
-        id: true,
-      }
-    });
-
-    if (Object.keys(getUserByNameAndPassword).length > 0) {
-      const userId = Object.values(getUserByNameAndPassword)[0].id;
-      console.log("User(" + userId + ") seems to exist");
-      const new_publicKey = makeRandomString(32) as string;
-      const setUserPublicKey: object | null = await prisma.user.update({
-        where: {
-          id: userId,
-        },
-        data: {
-          publickey: new_publicKey,
-        },
-      });
-      return res.json(new_publicKey);
-    }
-    else {
-      return res.status(403).json("0");
-    }
-  }
-  else {
-    return res.status(403).json("0");
-  }
-
+app.post("/login", async (req, res) => {
+  const { email, password } = req.body as any;
+  let response = await login(email, password)
+  return res.json(response);
 });
 
 app.post('/lookforsong', async (req: Request, res: Response) => {
-  var { name, publickey } = req.body as any;
+  var { name } = req.body as any;
 
   if (name === undefined) {
     name = "";
   }
 
-  if (publickey !== undefined) {
-    const checkIfPublicKeyExists: object | null = await prisma.user.findFirst({
-      where: {
-        publickey: publickey,
-      },
-    });
-
-    if (checkIfPublicKeyExists !== null) {
-      console.log("Key stimmt");
-      const getSongByName: object | null = await prisma.song.findMany({
-        where: {
-          OR: [{
-            name: {
-              contains: name,
-            }
-          },
-          {
-            album: {
-              contains: name,
-            }
-          },
-          {
-            artist: {
-              contains: name,
-            }
-          }],
-          NOT: [{
-            ready: 0,
-            name: 'downloading',
-          }]
+  const getSongByName: object | null = await prisma.song.findMany({
+    where: {
+      OR: [{
+        name: {
+          contains: name,
         }
-      });
+      },
+      {
+        album: {
+          contains: name,
+        }
+      },
+      {
+        artist: {
+          contains: name,
+        }
+      }],
+      NOT: [{
+        ready: 0,
+        name: 'downloading',
+      }]
+    }
+  });
 
-      return res.json(getSongByName);
-    }
-    else {
-      console.log("Key stimmt nicht");
-      return res.status(403).json("0");
-    }
-  }
-  else {
-    console.log("Kein Key angegeben");
-    return res.json("0");
-  }
+  return res.json(getSongByName);
 });
 
 app.get('/getsongtodownload', async (req: Request, res: Response) => {
@@ -200,7 +139,6 @@ app.get('/getsongtodownload', async (req: Request, res: Response) => {
     return res.json("0")
   }
 });
-
 
 app.post('/updatedownloadedsong', async (req: Request, res: Response) => {
   const { id, name, filename, image_filename, album, artist } = req.body as any;
