@@ -85,23 +85,24 @@ export default {
     },
     initialize() {
       console.log("Initializing...");
-      if (this.getCookie("publickey").length > 0) {
-        console.log("Cookie found 🍪");
+      if (this.$store.state.jwt) {
+        console.log("Should have some Jwt in Store 🍪");
         // toggle login
         this.ui_loggedIn = true;
         axios
-          .post(process.env.VUE_APP_EXPRESS_SERVER + "lookforsong", {
-            publickey: this.getCookie("publickey"),
-          })
-          .then((res) => {
-            if (res.data == "0") {
-              // most likely cookie is outdated, delete it so the user has to login again
-              document.cookie = "publickey=";
-            } else {
-              this.updateSongs(res.data);
+          .post(
+            process.env.VUE_APP_EXPRESS_SERVER + "lookforsong",
+            {},
+            {
+              headers: {
+                "x-access-token": this.$store.state.jwt,
+              },
             }
+          )
+          .then((res) => {
+            this.updateSongs(res.data);
           })
-          .catch((err) => console.log(err));
+          .catch((err) => alert("Something went wrong" + err));
 
         return true;
       } else {
@@ -159,30 +160,6 @@ export default {
           // location.reload();
         }
       }
-    },
-    getCookie(cname) {
-      let name = cname + "=";
-      let decodedCookie = decodeURIComponent(document.cookie);
-      let ca = decodedCookie.split(";");
-      let n = 0;
-      for (var c of ca) {
-        n++;
-        console.log("Inside a loop");
-        while (c.charAt(0) == " ") {
-          n++;
-          if (n > 1000) {
-            throw new Error(
-              "If there is a space inside this cookie, you'd be f**ked without this precaution haha.. i was there!"
-            );
-          }
-          console.log("Inside a loop, inside a loop");
-          c.substring(1);
-        }
-        if (c.indexOf(name) == 0) {
-          return c.substring(name.length, c.length);
-        }
-      }
-      return "";
     },
   },
 };

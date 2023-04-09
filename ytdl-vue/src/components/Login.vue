@@ -129,7 +129,7 @@ export default {
       if (!res.success) {
         console.log("Nope das hat nicht geklappt");
       } else {
-        document.cookie = "publickey=" + res;
+        this.$store.state.jwt = res.jwt;
         this.$emit("toggleAuth");
       }
     },

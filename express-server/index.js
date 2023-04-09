@@ -2,7 +2,7 @@ import { PrismaClient } from '@prisma/client';
 import express from 'express';
 import bodyParser from 'body-parser';
 import { login, register } from './shared.mjs';
-
+import { verifyToken } from './middleware.mjs';
 
 // start prisma client
 const prisma = new PrismaClient()
@@ -71,10 +71,10 @@ app.post("/login", async (req, res) => {
   return res.json(response);
 });
 
-app.post('/lookforsong', async (req, res) => {
-  let { name } = req.body;
+app.post('/lookforsong', verifyToken, async (req, res) => {
+  let { name } = req.query;
 
-  if (name === undefined) {
+  if (name == undefined) {
     name = "";
   }
 

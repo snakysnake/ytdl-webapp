@@ -1,3 +1,5 @@
+import Jwt from 'jsonwebtoken';
+
 async function verifyToken(req, res, next) {
     const token = req.headers["x-access-token"];
 
