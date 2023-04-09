@@ -103,7 +103,7 @@ export default {
         .then((res) => this.setLoginCredentials(res.data))
         .catch((err) => {
           console.log(err);
-          alert("Login did not work, unfortunately..");
+          alert(err.response.data);
         });
     },
     register() {
@@ -122,9 +122,7 @@ export default {
         })
         .catch((err) => {
           console.log(err);
-          alert(
-            "Unfortunately this did not work. Most likely your Creation Secret is incorrect."
-          );
+          alert(err.response.data);
         });
     },
     setLoginCredentials(res) {

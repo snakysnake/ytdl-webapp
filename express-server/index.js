@@ -1,7 +1,7 @@
 import { PrismaClient } from '@prisma/client';
 import express from 'express';
 import bodyParser from 'body-parser';
-import { login } from './shared.mjs';
+import { login, register } from './shared.mjs';
 
 
 // start prisma client
@@ -46,24 +46,18 @@ app.post('/createuser', async (req, res) => {
   // dont do stuff like this in any project.. it was one of my first projects when it comes to serverside js 
   // and i did not really know what i was doing..
   // but i knew it was unsafe, but yeahhhhh
-  if (keytocreateuser == process.env.CREATION_KEY) {
-    try {
-      const user = await prisma.user.create({
-        data: {
-          name: name,
-          passwordHash: password,
-          // anstelle von 'email: email,' kann man auch folgende kurzschreibweise nehmen:
-          email: email,
-        },
-      });
-      return res.json(user);
-    }
-    catch (e) {
-      console.log(e);
-      return res.status(403).json('0');
-    }
+
+  if (keytocreateuser != process.env.CREATION_KEY) {
+    return res.status(403).send("Incorrect Key");
   }
-  return res.status(403).send("Das hat nicht geklappt");
+
+  const { success, message } = await register(email, name, password);
+  if (!success) {
+    return res.status(419).send(message);
+  }
+
+
+  return res.send(message);
   // ----------------------------------------------------
 });
 
@@ -72,7 +66,7 @@ app.post("/login", async (req, res) => {
   if (!username || !password) {
     return res.status(419).send("Missing info");
   }
-  
+
   let response = await login(username, password)
   return res.json(response);
 });
