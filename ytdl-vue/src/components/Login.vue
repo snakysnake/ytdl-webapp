@@ -97,7 +97,7 @@ export default {
     login() {
       axios
         .post(process.env.VUE_APP_EXPRESS_SERVER + "login", {
-          name: this.ui_username,
+          username: this.ui_username,
           password: this.ui_password,
         })
         .then((res) => this.setLoginCredentials(res.data))
@@ -128,7 +128,7 @@ export default {
         });
     },
     setLoginCredentials(res) {
-      if (res === "0") {
+      if (!res.success) {
         console.log("Nope das hat nicht geklappt");
       } else {
         document.cookie = "publickey=" + res;

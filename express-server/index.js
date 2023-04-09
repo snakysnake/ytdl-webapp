@@ -68,13 +68,17 @@ app.post('/createuser', async (req, res) => {
 });
 
 app.post("/login", async (req, res) => {
-  const { email, password } = req.body;
-  let response = await login(email, password)
+  const { username, password } = req.body;
+  if (!username || !password) {
+    return res.status(419).send("Missing info");
+  }
+  
+  let response = await login(username, password)
   return res.json(response);
 });
 
 app.post('/lookforsong', async (req, res) => {
-  var { name } = req.body;
+  let { name } = req.body;
 
   if (name === undefined) {
     name = "";
@@ -123,7 +127,7 @@ app.get('/getsongtodownload', async (req, res) => {
     // set song ready so our background script does not get con fu sed
 
     // figure out how to insert the id here... @benedev? xD
-    var songToDownloadId = Object.values(getSongToDownload)[0];
+    let songToDownloadId = Object.values(getSongToDownload)[0];
     console.log("EOI: " + songToDownloadId);
     const setSongToReady = await prisma.song.update({
       where: {
@@ -142,7 +146,7 @@ app.get('/getsongtodownload', async (req, res) => {
 
 app.post('/updatedownloadedsong', async (req, res) => {
   const { id, name, filename, image_filename, album, artist } = req.body;
-  var id_int = parseInt(id);
+  let id_int = parseInt(id);
   const updateDownloadedSong = await prisma.song.update({
     where: {
       id: id_int,

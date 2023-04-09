@@ -4,15 +4,15 @@ import { PrismaClient } from '@prisma/client';
 
 const prisma = new PrismaClient()
 
-export async function login(email, password) {
-    console.log("User with email: (", email, ") trying to login...");
+export async function login(username, password) {
+    console.log("User with Username: (", username, ") trying to login...");
     let success = false;
     let message = "Unbekannter komischer Fehler...";
 
     try {
         const user = await prisma.user.findUnique({
             where: {
-                email: email.toLowerCase(),
+                name: username
             }
         });
 
